@@ -1,126 +1,135 @@
-class Employee {
-    private String employeeId;
-    private String name;
-    private String position;
-    private double salary;
+class Task {
+    private String taskId;
+    private String taskName;
+    private String status;
 
     // Constructor
-    public Employee(String employeeId, String name, String position, double salary) {
-        this.employeeId = employeeId;
-        this.name = name;
-        this.position = position;
-        this.salary = salary;
+    public Task(String taskId, String taskName, String status) {
+        this.taskId = taskId;
+        this.taskName = taskName;
+        this.status = status;
     }
 
     // Getters
-    public String getEmployeeId() {
-        return employeeId;
+    public String getTaskId() {
+        return taskId;
     }
 
-    public String getName() {
-        return name;
+    public String getTaskName() {
+        return taskName;
     }
 
-    public String getPosition() {
-        return position;
-    }
-
-    public double getSalary() {
-        return salary;
+    public String getStatus() {
+        return status;
     }
 
     @Override
     public String toString() {
-        return "Employee [employeeId=" + employeeId + ", name=" + name + ", position=" + position + ", salary=" + salary + "]";
+        return "Task [taskId=" + taskId + ", taskName=" + taskName + ", status=" + status + "]";
     }
 }
-class EmployeeManager {
-    private Employee[] employees;
-    private int size;
+class Node {
+    Task task;
+    Node next;
 
     // Constructor
-    public EmployeeManager(int capacity) {
-        employees = new Employee[capacity];
-        size = 0;
+    public Node(Task task) {
+        this.task = task;
+        this.next = null;
     }
+}
 
-    // Add an employee
-    public void addEmployee(Employee employee) {
-        if (size < employees.length) {
-            employees[size++] = employee;
+class TaskLinkedList {
+    private Node head;
+
+    // Add a task to the linked list
+    public void addTask(Task task) {
+        Node newNode = new Node(task);
+        if (head == null) {
+            head = newNode;
         } else {
-            System.out.println("Array is full. Cannot add more employees.");
+            Node current = head;
+            while (current.next != null) {
+                current = current.next;
+            }
+            current.next = newNode;
         }
     }
 
-    // Search for an employee by ID
-    public Employee searchEmployeeById(String employeeId) {
-        for (Employee emp : employees) {
-            if (emp != null && emp.getEmployeeId().equals(employeeId)) {
-                return emp;
+    // Search for a task by ID
+    public Task searchTaskById(String taskId) {
+        Node current = head;
+        while (current != null) {
+            if (current.task.getTaskId().equals(taskId)) {
+                return current.task;
             }
+            current = current.next;
         }
         return null;
     }
 
-    // Traverse and display all employees
-    public void traverseEmployees() {
-        for (Employee emp : employees) {
-            if (emp != null) {
-                System.out.println(emp);
-            }
+    // Traverse and display all tasks
+    public void traverseTasks() {
+        Node current = head;
+        while (current != null) {
+            System.out.println(current.task);
+            current = current.next;
         }
     }
 
-    // Delete an employee by ID
-    public boolean deleteEmployeeById(String employeeId) {
-        for (int i = 0; i < size; i++) {
-            if (employees[i].getEmployeeId().equals(employeeId)) {
-                // Shift elements to the left
-                for (int j = i; j < size - 1; j++) {
-                    employees[j] = employees[j + 1];
+    // Delete a task by ID
+    public boolean deleteTaskById(String taskId) {
+        Node current = head;
+        Node previous = null;
+
+        while (current != null) {
+            if (current.task.getTaskId().equals(taskId)) {
+                if (previous == null) {
+                    head = current.next; // Deleting the head node
+                } else {
+                    previous.next = current.next;
                 }
-                employees[size - 1] = null;
-                size--;
                 return true;
             }
+            previous = current;
+            current = current.next;
         }
         return false;
     }
 }
-public class Ex_4_Employee_Management_System{
+public class Ex_5_Task_Management_System{
     public static void main(String[] args) {
-        EmployeeManager manager = new EmployeeManager(5);
+        TaskLinkedList taskList = new TaskLinkedList();
 
-        // Adding employees
-        manager.addEmployee(new Employee("E001", "Alice", "Developer", 75000));
-        manager.addEmployee(new Employee("E002", "Bob", "Designer", 65000));
-        manager.addEmployee(new Employee("E003", "Charlie", "Manager", 85000));
+        // Adding tasks
+        taskList.addTask(new Task("T001", "Design Database", "In Progress"));
+        taskList.addTask(new Task("T002", "Develop API", "Pending"));
+        taskList.addTask(new Task("T003", "Test Application", "Completed"));
 
-        // Traversing employees
-        System.out.println("All Employees:");
-        manager.traverseEmployees();
+        // Traversing tasks
+        System.out.println("All Tasks:");
+        taskList.traverseTasks();
 
-        // Searching for an employee
-        System.out.println("\nSearching for employee with ID E002:");
-        Employee employee = manager.searchEmployeeById("E002");
-        if (employee != null) {
-            System.out.println(employee);
+        // Searching for a task
+        System.out.println("\nSearching for task with ID T002:");
+        Task task = taskList.searchTaskById("T002");
+        if (task != null) {
+            System.out.println(task);
         } else {
-            System.out.println("Employee not found.");
+            System.out.println("Task not found.");
         }
 
-        // Deleting an employee
-        System.out.println("\nDeleting employee with ID E002:");
-        boolean deleted = manager.deleteEmployeeById("E002");
+        // Deleting a task
+        System.out.println("\nDeleting task with ID T002:");
+        boolean deleted = taskList.deleteTaskById("T002");
         if (deleted) {
-            System.out.println("Employee deleted.");
+            System.out.println("Task deleted.");
         } else {
-            System.out.println("Employee not found.");
+            System.out.println("Task not found.");
         }
 
-        // Traversing employees after deletion
-        System.out.println("\nAll Employees after deletion:");
-        manager.traverseEmployees();
+        // Traversing tasks after deletion
+        System.out.println("\nAll Tasks after deletion:");
+        taskList.traverseTasks();
     }
 }
